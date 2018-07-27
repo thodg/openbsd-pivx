@@ -1,0 +1,22 @@
+diff --git a/src/compat.h b/src/compat.h
+index f51f9df96..e86bcd33d 100644
+--- src/compat.h.orig
++++ src/compat.h
+@@ -36,14 +36,15 @@
+ #include <arpa/inet.h>
+ #include <ifaddrs.h>
+ #include <limits.h>
++#include <sys/types.h>
++#include <sys/socket.h>
+ #include <net/if.h>
+ #include <netdb.h>
+ #include <netinet/in.h>
+ #include <sys/fcntl.h>
+ #include <sys/mman.h>
+-#include <sys/socket.h>
+-#include <sys/types.h>
+ #include <unistd.h>
++#include <sys/select.h>
+ #endif
+ 
+ #ifdef WIN32

@@ -1,0 +1,93 @@
+diff --git a/configure.ac b/configure.ac
+index 9d9dc25cb..947d8baaa 100644
+--- configure.ac.orig
++++ configure.ac
+@@ -177,6 +177,13 @@ AC_ARG_WITH([system-univalue],
+   [system_univalue=no]
+ )
+ 
++AC_ARG_WITH([system-secp256k1],
++  [AS_HELP_STRING([--with-system-secp256k1],
++  [Build with system secp256k1 (default is no)])],
++  [system_secp256k1=$withval],
++  [system_secp256k1=no]
++)
++
+ AC_ARG_WITH([protoc-bindir],[AS_HELP_STRING([--with-protoc-bindir=BIN_DIR],[specify protoc bin path])], [protoc_bin_path=$withval], [])
+ 
+ # Enable debug
+@@ -664,6 +671,7 @@ AX_BOOST_FILESYSTEM
+ AX_BOOST_PROGRAM_OPTIONS
+ AX_BOOST_THREAD
+ AX_BOOST_CHRONO
++AX_BOOST_DATE_TIME
+ 
+ dnl Boost 1.56 through 1.62 allow using std::atomic instead of its own atomic
+ dnl counter implementations. In 1.63 and later the std::atomic approach is default.
+@@ -730,7 +738,7 @@ fi
+ 
+ if test x$use_boost = xyes; then
+ 
+-BOOST_LIBS="$BOOST_LDFLAGS $BOOST_SYSTEM_LIB $BOOST_FILESYSTEM_LIB $BOOST_PROGRAM_OPTIONS_LIB $BOOST_THREAD_LIB $BOOST_CHRONO_LIB"
++BOOST_LIBS="$BOOST_LDFLAGS $BOOST_SYSTEM_LIB $BOOST_FILESYSTEM_LIB $BOOST_PROGRAM_OPTIONS_LIB $BOOST_THREAD_LIB $BOOST_CHRONO_LIB $BOOST_DATE_TIME_LIB"
+ 
+ 
+ dnl If boost (prior to 1.57) was built without c++11, it emulated scoped enums
+@@ -941,6 +949,44 @@ AM_CONDITIONAL([EMBEDDED_UNIVALUE],[test x$system_univalue = xno])
+ AC_SUBST(UNIVALUE_CFLAGS)
+ AC_SUBST(UNIVALUE_LIBS)
+ 
++dnl secp256k1 check
++
++if test x$system_secp256k1 != xno ; then
++  found_secp256k1=no
++  if test x$use_pkgconfig = xyes; then
++    : #NOP
++    m4_ifdef(
++      [PKG_CHECK_MODULES],
++      [
++        PKG_CHECK_MODULES([SECP256K1],[libsecp256k1],[found_secp256k1=yes],[true])
++      ]
++    )
++  else
++    AC_CHECK_HEADER([secp256k1.h],[
++      AC_CHECK_LIB([secp256k1],  [main],[
++        SECP256K1_LIBS=-lsecp256k1
++        found_secp256k1=yes
++      ],[true])
++    ],[true])
++  fi
++
++  if test x$found_secp256k1 = xyes ; then
++    system_secp256k1=yes
++  elif test x$system_secp256k1 = xyes ; then
++    AC_MSG_ERROR([secp256k1 not found])
++  else
++    system_secp256k1=no
++  fi
++fi
++
++if test x$system_secp256k1 = xno ; then
++  SECP256K1_CFLAGS='-I$(srcdir)/secp256k1/include'
++  SECP256K1_LIBS='secp256k1/libsecp256k1.la'
++fi
++AM_CONDITIONAL([EMBEDDED_SECP256K1],[test x$system_secp256k1 = xno])
++AC_SUBST(SECP256K1_CFLAGS)
++AC_SUBST(SECP256K1_LIBS)
++
+ CFLAGS_TEMP="$CFLAGS"
+ LIBS_TEMP="$LIBS"
+ CFLAGS="$CFLAGS $SSL_CFLAGS $CRYPTO_CFLAGS"
+@@ -1174,8 +1220,10 @@ if test x$system_univalue = xno; then
+   AC_CONFIG_SUBDIRS([src/univalue])
+ fi
+ 
+-ac_configure_args="${ac_configure_args} --disable-shared --with-pic --enable-module-recovery"
+-AC_CONFIG_SUBDIRS([src/secp256k1])
++if test x$system_secp256k1 = xno; then
++  ac_configure_args="${ac_configure_args} --disable-shared --with-pic --enable-module-recovery"
++  AC_CONFIG_SUBDIRS([src/secp256k1])
++fi
+ 
+ AC_OUTPUT
+ 
