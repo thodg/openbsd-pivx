@@ -16,6 +16,7 @@ MAINTAINER =	Thomas de Grivel <thoxdg@gmail.com>
 PERMIT_PACKAGE_CDROM =	Yes
 
 WANTLIB += ${COMPILER_LIBCXX} event m bitcoinconsensus secp256k1 univalue
+LIB_DEPENDS = coin/bitcoin
 
 COMPILER = ports-gcc
 

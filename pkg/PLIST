@@ -1,0 +1,5 @@
+@comment $OpenBSD$
+@bin bin/pivx-cli
+@bin bin/pivx-tx
+@bin bin/pivxd
+@bin bin/test_pivx
