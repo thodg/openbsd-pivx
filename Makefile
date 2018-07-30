@@ -15,8 +15,12 @@ MAINTAINER =	Thomas de Grivel <thoxdg@gmail.com>
 # MIT
 PERMIT_PACKAGE_CDROM =	Yes
 
-WANTLIB += ${COMPILER_LIBCXX} event m bitcoinconsensus secp256k1 univalue
-LIB_DEPENDS = coin/bitcoin
+LIB_DEPENDS+=	devel/boost
+LIB_DEPENDS+=	coin/bitcoin
+WANTLIB += ${COMPILER_LIBCXX} event m
+WANTLIB += boost_system-mt boost_filesystem-mt boost_program_options-mt
+WANTLIB += boost_thread-mt boost_chrono-mt boost_date_time-mt
+WANTLIB += bitcoinconsensus secp256k1 univalue
 
 COMPILER = ports-gcc
 
