@@ -1,0 +1,12 @@
+#!/bin/ksh
+#
+# $OpenBSD: inetd,v 1.2 2018/01/11 19:52:12 rpe Exp $
+
+daemon="/usr/local/bin/pivxd"
+daemon_flags="-daemon -datadir=/var/pivx/.pivx -dbcache=100 -maxmempool=100 -forcestart -forcednsseed"
+daemon_timeout=600
+daemon_user=_pivxd
+
+. /etc/rc.d/rc.subr
+
+rc_cmd $1

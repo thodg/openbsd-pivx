@@ -1,5 +1,9 @@
 @comment $OpenBSD$
+@newgroup _pivxd:902
+@newuser _pivxd:902:902:daemon:PIVX Daemon:/var/pivx:/bin/ksh
 @bin bin/pivx-cli
 @bin bin/pivx-tx
 @bin bin/pivxd
 @bin bin/test_pivx
+@sample /var/pivx/
+@rcscript ${RCDIR}/pivxd
