@@ -22,7 +22,7 @@ WANTLIB += boost_system-mt boost_filesystem-mt boost_program_options-mt
 WANTLIB += boost_thread-mt boost_chrono-mt boost_date_time-mt
 WANTLIB += bitcoinconsensus secp256k1 univalue
 
-COMPILER = ports-gcc
+COMPILER = base-clang
 
 CONFIGURE_STYLE =	gnu
 
@@ -32,7 +32,7 @@ CONFIGURE_ARGS =	--with-gui=no \
 			--with-unsupported-ssl \
 			CXXFLAGS="-O2 -pipe -I/usr/local/include/db4.8 -I/usr/local/include" \
 			LIBS="-L/usr/local/lib/db4.8 -ldb_cxx-4.8" \
-			CC=egcc CXX=eg++
+			CC=cc CXX=c++
 
 MAKE_ENV =		AUTOCONF_VERSION=2.69 \
 			AUTOMAKE_VERSION=1.15
